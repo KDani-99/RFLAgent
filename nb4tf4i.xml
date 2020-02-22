@@ -155,7 +155,7 @@
                     <Item reward="-1" type="apple melon"/>
                     <Item reward="-2" type="sugar cake cookie pumpkin_pie"/>
                 </RewardForCollectingItem>
-                <ContinuousMovementCommands turnSpeedDegs="180"/>
+                <ContinuousMovementCommands turnSpeedDegs="90"/>
                 <ObservationFromNearbyEntities>
                     <Range name="close_entities" xrange="2" yrange="2" zrange="2" />
                     <Range name="far_entities" xrange="10" yrange="2" zrange="10" update_frequency="100"/>
