@@ -121,7 +121,6 @@ class Steve:
                     print(data)
                     if len(blocks) >= 16:
                         #turnCount = direction
-                        # ha eleri az adott iranyban a blokkot es az fold, akkor megfordul, igy minden oldalon vegigmegy
                         if (turnCount == 1 and blocks[12] == "dirt") or (turnCount == 2 and blocks[10] == "dirt") or (turnCount == 3 and blocks[14] == "dirt") or (turnCount == 0 and blocks[16] == "dirt"):
                             if turnCount == 3:
                                 self.jump(turnCount)
