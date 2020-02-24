@@ -82,6 +82,22 @@ class Steve:
         self.agent_host = agent_host
         self.nof_red_flower = 0
 
+    def turn(self,turnCount):
+        self.agent_host.sendCommand("turn 0")
+        time.sleep(0.15)
+        self.agent_host.sendCommand("turn 1")
+        time.sleep(1)
+        self.agent_host.sendCommand("turn 0")
+
+    def jump(self,turnCount):
+        self.agent_host.sendCommand( "jump 1" )
+        self.agent_host.sendCommand( "move 1" )
+        time.sleep(0.35)
+        self.agent_host.sendCommand( "jump 0" )
+        time.sleep(0.35)
+        self.agent_host.sendCommand( "move 0" )
+        time.sleep(0.2)
+
     def run(self):
 
         self.agent_host.sendCommand("turn 0")
@@ -90,6 +106,7 @@ class Steve:
 
         world_state = self.agent_host.getWorldState()
         # Loop until mission ends:
+
         turnCount = 0
         
         while world_state.is_mission_running:
@@ -97,39 +114,21 @@ class Steve:
             if world_state.number_of_observations_since_last_state > 0:
                 msg = world_state.observations[-1].text
                 data = json.loads(msg)
+                print(data)
                 self.agent_host.sendCommand("move 1")
                 if "nbr3x3" in data:
                     blocks = data["nbr3x3"]
                     print(data)
                     if len(blocks) >= 16:
-                        #self.agent_host.sendCommand( "move 0" )
-                        # directions
+                        #turnCount = direction
+                        # ha eleri az adott iranyban a blokkot es az fold, akkor megfordul, igy minden oldalon vegigmegy
                         if (turnCount == 1 and blocks[12] == "dirt") or (turnCount == 2 and blocks[10] == "dirt") or (turnCount == 3 and blocks[14] == "dirt") or (turnCount == 0 and blocks[16] == "dirt"):
-                            '''
-                            lastRotation = data['close_entities'][0]['yaw']
-                            currentRotation = 0.0
-                            
-                            while round(abs(lastRotation - currentRotation) % 90) != 0:#math.ceil(abs(lastRotation - currentRotation)) < 90-5:
-                                world_state = self.agent_host.getWorldState()
-                                if world_state.number_of_observations_since_last_state > 0:
-                                    msg = world_state.observations[-1].text
-                                    data = json.loads(msg)
-                                    blocks = data["nbr3x3"]
-                                    print(math.ceil(abs(lastRotation - currentRotation)))
-                                    self.agent_host.sendCommand( "turn 1" )
-                                    currentRotation = data['close_entities'][0]['yaw']
-                                time.sleep(0.00001)
-                            '''
-                            self.agent_host.sendCommand("turn 1")
-                            time.sleep(1)
-                            self.agent_host.sendCommand("turn 0")
+                            if turnCount == 3:
+                                self.jump(turnCount)
+                            self.turn(turnCount)
                             turnCount += 1
-                        elif turnCount == 4:
-                            self.agent_host.sendCommand( "jump 1" )
-                            self.agent_host.sendCommand( "move 1" )
-                            time.sleep(0.5)
-                            self.agent_host.sendCommand( "jump 0" )
-                            turnCount = 0
+                            if turnCount == 4:
+                                turnCount = 0
 
 
             world_state = self.agent_host.getWorldState()
