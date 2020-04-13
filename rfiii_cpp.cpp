@@ -39,16 +39,13 @@ vector<string> GetItems(WorldState world_state,std::stringstream & ss, boost::pr
     ss.clear();
     pt.clear();
 
-    TimestampedString * sensations = world_state.observations.at(0).get();
-    ss << sensations->text;
+    ss << world_state.observations.at(0).get()->text;
     boost::property_tree::read_json(ss, pt);
     BOOST_FOREACH(boost::property_tree::ptree::value_type &v, pt.get_child("nbr3x3"))
     {
         assert(v.first.empty());
         nbr3x3.push_back(v.second.data());
     }
-
-    //delete sensations;
 
     return nbr3x3;
 }
@@ -121,34 +118,34 @@ int main(int argc, const char **argv)
     bool pickedFlower = false;
     bool jumpedY = false;
     bool initialTurn = true;
+    bool rf = false;
 
-    double y = 0;
+    
     int levelIncrement = 0;
-    double yPos = 0;
     int turnCount = 0;
-    double yaw = 0;
-
     int stepCount = 0;
 
-    agent_host.sendCommand("look 1");
-    agent_host.sendCommand("look 1");
+    double yaw = 0;
+    double yPos = 0;
+    double y = 0;
 
-    bool rf = false;
+    agent_host.sendCommand("look 1");
+    agent_host.sendCommand("look 1");
 
     do {
 
         if(world_state.number_of_observations_since_last_state != 0)
         {
-            TimestampedString * sensations = world_state.observations.at(0).get();
 
             std::stringstream ss;
-            ss << sensations->text;
+            ss << world_state.observations.at(0).get()->text;
             boost::property_tree::ptree pt;
             boost::property_tree::read_json(ss, pt);
 
             vector<std::string> nbr3x3;
 
             nbr3x3 = GetItems(world_state,ss,pt);
+
 
             if(yaw == 0 && nbr3x3[11] == "dirt" && nbr3x3[14] == "dirt")
             {
@@ -352,7 +349,6 @@ int main(int argc, const char **argv)
                 jumpedY = true;
                 stepCount = 0;
             }
-            //delete sensations;
         }
 
         if(rf) boost::this_thread::sleep(boost::posix_time::milliseconds(15));
